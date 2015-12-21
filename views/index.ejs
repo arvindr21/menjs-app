@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Users</h1>
+	
+	<table>
+	</table>
+
+	<h3>Save User</h3>
+
+	Name : <input type="text" id="name">
+	Age : <input type="text" id="age">
+	<button id="save">Save</button>
+	<button id="update" class="hide">Update</button>
+
+	<script src="javascripts/jquery.js"></script>
+	<script type="text/javascript">
+
+	$(document).ready(function(){
+		var currEditId = 0;
+
+		// load all users
+
+		function getAll(){
+			$.get('/users')
+		  .then(function(data){
+		  	var users = data;
+
+		  	if(users.length === 0){
+		  		$('table').html('<tr id="nodata"><td>NO Users!!</td></tr>')
+		  	}else{
+		  		var html = '';
+		  		for (var i = 0; i < users.length; i++) {
+		  			html += '<tr>';
+		  			html += '<td>';
+		  			html += '<a class="link" href="javascript:" data-id="'+ users[i]._id + '">';
+		  			html += users[i].name + ' :: '+ users[i].age;
+		  			html += '</a>';
+		  			html += '<em data-id="'+ users[i]._id + '">&nbsp;&nbsp;&nbsp;x</em>';
+		  			html += '</td>';
+		  			html += '</tr>';
+		  		};
+
+		  		$('table').html(html);
+		  	}
+		  })
+		}
+
+
+		getAll();
+
+		  $('#save').on('click', function(){
+
+		  	var name = $('#name').val().trim();
+		  	var age = $('#age').val().trim();
+
+		  	// val
+
+		  	$.post('/users', {
+		  		name:name,
+		  		age:age
+		  	}).then(function(user){
+		  		
+		  		var html = '';
+
+	  			html += '<tr>';
+	  			html += '<td>';
+	  			html += '<a class="link" href="javascript:" data-id="'+ user._id + '">';
+	  			html += user.name + ' :: '+ user.age;
+	  			html += '</a>';
+	  			html += '<em data-id="'+ user._id + '">&nbsp;&nbsp;&nbsp;x</em>';
+	  			html += '</td>';
+	  			html += '</tr>';
+
+	  			$('table').append(html);
+
+
+	  			$('#name').val('');
+		  		$('#age').val('');
+		  	})
+
+		  });
+
+
+		  // update setup
+		  $('body').on('click', 'a', function(){
+
+		  	var $a = $(this);
+
+		  	currEditId = $a.data('id');
+		  	var str = $a.text();
+		  	var name = str.split('::')[0].trim();
+		  	var age = str.split('::')[1].trim();
+
+
+		  	$('#name').val(name);
+		  	$('#age').val(age);
+
+		  	$('#save').addClass('hide');
+		  	$('#update').removeClass('hide');
+		  })
+
+
+		  $('#update').on('click', function(){
+		  	var name = $('#name').val().trim();
+		  	var age = $('#age').val().trim();
+
+
+		  	$.ajax({
+		  		url : '/users/'+currEditId,
+		  		method: 'PUT',
+		  		data : {
+		  			name:name,
+		  			age:age
+		  		}
+		  	}).then(function(data){
+		  	
+		  		if(data.nModified === 1){
+		  			alert('success');
+		  		}
+
+		  		getAll();
+
+		  		$('#name').val('');
+		  		$('#age').val('');
+
+		  		$('#update').addClass('hide');
+		  	$('#save').removeClass('hide');
+		  	})
+
+		  })
+
+
+		   $('body').on('click', 'em', function(){
+
+		  	var $em = $(this);
+
+		  	currEditId = $em.data('id');
+
+		  	$.ajax({
+		  		url : '/users/'+currEditId,
+		  		method: 'DELETE',
+		  	}).then(function(data){
+		  	
+		  		if(data.ok === 1){
+		  			alert('success');
+		  		}
+
+		  		getAll();
+
+		  	})
+
+		  });
+
+
+	});
+	</script>
+  </body>
+</html>
