@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="SPAApp">
+
+<head>
+    <title>SPA App</title>
+    <style type="text/css">
+    body {
+        padding-top: 50px;
+    }
+    
+    .starter-template {
+        padding: 40px 15px;
+        text-align: center;
+    }
+    </style>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-route/angular-route.js"></script>
+    <script src="app.js"></script>
+</head>
+
+<body>
+    
+    <div ng-include="headerTemplateUrl"></div>
+    
+	<div ng-view></div>
+
+	
+
+</body>
+
+</html>

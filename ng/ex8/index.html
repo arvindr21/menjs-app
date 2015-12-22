@@ -1,0 +1,52 @@
+<!doctype html>
+<html ng-app="TodoApp">
+
+<head>
+    <style type="text/css">
+    ul {
+        list-style: none;
+    }
+    
+    .ng-valid-email {
+        border: 1px solid green !important;
+    }
+    
+    .ng-invalid-email {
+        border: 1px solid red !important;
+    }
+    </style>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+
+<body ng-controller="AppCtrl" class="container">
+    <h2 class="text-center">Todo App</h2>
+    <input type="email" class="form-control" ng-model="TodoText" placeholder="Add a Todo" required ng-keypress="saveTodo($event)">
+    <br>
+    <br>
+    <ul>
+        <li ng-repeat="todo in todos">
+            <div class="row">
+                <div class="col-md-1">
+                    <input type="checkbox" ng-model="todo.isCompleted">
+                </div>
+                <div class="col-md-7">
+                    <div ng-show="!todo.isEditMode">
+                        {{todo.desc}}
+                    </div>
+                    <div ng-show="todo.isEditMode">
+                        <input type="text" ng-model="todo.desc" ng-keypress="updateTodo($event, todo)">
+                        <a href="javascript:" ng-click="cancelUpdate(todo)">Cancel</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-info" ng-click="editTodo(todo)">Edit</button>
+                    <button type="button" class="btn btn-danger" ng-click="deleteTodo(todo)">Delete</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</body>
+
+</html>
